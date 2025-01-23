@@ -8,7 +8,6 @@ public class QuotesenderapiApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(QuotesenderapiApplication.class, args);
-		//test
 	}
 
 }
