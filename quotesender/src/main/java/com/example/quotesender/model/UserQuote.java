@@ -7,13 +7,17 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @Entity
 @Table(name="UsersQuote", schema="UsersQuote")
 public class UserQuote {
+
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private int quoteID;
+
     @Column(name="likes")
     private int likes;
+
     @Column(name="dislikes")
     private int dislikes;
+
     @Column(name="quoteText")
     private String quoteText;
 

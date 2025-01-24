@@ -6,13 +6,16 @@ import jakarta.persistence.*;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity
-@Table(name="Users")
+@Table(name="Users", schema="Users")
 public class User {
+
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private int userID;
+
     @Column(name="login")
     private String userLogin;
+
     @Column(name="password")
     private String userPassword;
 
