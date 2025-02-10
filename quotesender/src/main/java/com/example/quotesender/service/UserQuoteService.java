@@ -5,4 +5,8 @@ import java.util.List;
 
 public interface UserQuoteService {
     public List<UserQuote> showAllQuotes();
+
+    public String deleteQuote(int id);
+
+    public String addQuote();
 }

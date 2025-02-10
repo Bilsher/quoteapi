@@ -18,4 +18,14 @@ public class UserQuoteServiceImp implements UserQuoteService {
     public List<UserQuote> showAllQuotes() {
         return UserQuoteRepository.findAll();
     }
+
+    @Override
+    public String deleteQuote(int id) {
+        return null;
+    }
+
+    @Override
+    public String addQuote() {
+        return null;
+    }
 }

@@ -1,19 +1,25 @@
-package com.example.quotesender.model;
+package com.example.quotesender.repository;
 
 import jakarta.persistence.*;
 
-
 import static jakarta.persistence.GenerationType.IDENTITY;
-public class User {
+
+@Entity
+@Table(name="Users", schema="Users")
+public class UserEntity {
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
     private int userID;
 
+    @Column(name="login")
     private String userLogin;
 
+    @Column(name="password")
     private String userPassword;
 
-    public User(){}
+    public UserEntity(){}
 
-    public User(String userLogin,String userPassword){
+    public UserEntity(String userLogin,String userPassword){
         this.userLogin=userLogin;
         this.userPassword=userPassword;
     }
@@ -41,6 +47,4 @@ public class User {
     public void setUserPassword(String userPassword) {
         this.userPassword = userPassword;
     }
-
-
 }
