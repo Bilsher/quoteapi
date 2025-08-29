@@ -21,10 +21,6 @@ public class UserServiceImp implements UserService{
     public String userRegistration(User user,
                                    HttpServletRequest request,
                                    HttpServletResponse response) throws IOException{
-        if(authCheck(request)) {
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            return "You already authorized";
-        }
 
         if (userRepository.existsByUserLogin(user.getUserLogin())) {
             response.setStatus(HttpServletResponse.SC_CONFLICT);
@@ -37,17 +33,12 @@ public class UserServiceImp implements UserService{
         userRepository.save(userEntity);
         response.setStatus(HttpServletResponse.SC_OK);
         return "User saved";
-
     }
 
     @Override
     public String userLogin(User user,
                             HttpServletRequest request,
                             HttpServletResponse response) throws IOException {
-        if(authCheck(request)) {
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            return "You already authorized";
-        }
 
         if(userRepository.existsByUserLogin(user.getUserLogin())) {
             if (userRepository.existsByUserLoginAndUserPassword(user.getUserLogin(), user.getUserPassword())) {
@@ -64,32 +55,15 @@ public class UserServiceImp implements UserService{
     }
 
     @Override
-    public String userLogOut(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        if(authCheck(request)) {
+    public String userLogOut(HttpServletRequest request,
+                             HttpServletResponse response) throws IOException {
             request.getSession().setAttribute("isAuthenticated",false);
-            response.setStatus(HttpServletResponse.SC_OK);
             return "You logout succsesfuly";
-        }
-        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-        return "You not authorized";
     }
 
     @Override
-    public List<UserEntity> showAllUsers(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        if(authCheck(request)) {
-            return userRepository.findAll();
-       }
-        response.getWriter().println("Not Authorized!");
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        return null;
-    }
-
-    public boolean authCheck(HttpServletRequest request){
-        HttpSession session = request.getSession();
-        Boolean isAuthenticated = (Boolean) session.getAttribute("isAuthenticated");
-        if (isAuthenticated == null) {
-            isAuthenticated = false;
-        }
-        return isAuthenticated;
+    public List<UserEntity> showAllUsers(HttpServletRequest request,
+                                         HttpServletResponse response) throws IOException {
+        return userRepository.findAll();
     }
 }
