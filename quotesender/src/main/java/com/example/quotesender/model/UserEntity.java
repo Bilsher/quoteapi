@@ -1,4 +1,4 @@
-package com.example.quotesender.repository;
+package com.example.quotesender.model;
 
 import jakarta.persistence.*;
 

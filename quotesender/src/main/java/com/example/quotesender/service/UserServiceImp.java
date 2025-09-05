@@ -1,7 +1,7 @@
 package com.example.quotesender.service;
 
 import com.example.quotesender.model.User;
-import com.example.quotesender.repository.UserEntity;
+import com.example.quotesender.model.UserEntity;
 import com.example.quotesender.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImp implements UserService{
@@ -36,29 +37,37 @@ public class UserServiceImp implements UserService{
     }
 
     @Override
-    public String userLogin(User user,
-                            HttpServletRequest request,
-                            HttpServletResponse response) throws IOException {
-
+    public String userLogin(User user, HttpServletRequest request, HttpServletResponse response) throws IOException {
         if(userRepository.existsByUserLogin(user.getUserLogin())) {
             if (userRepository.existsByUserLoginAndUserPassword(user.getUserLogin(), user.getUserPassword())) {
-                request.getSession().setAttribute("isAuthenticated", true);
-                response.setStatus(HttpServletResponse.SC_OK);
-                return "Hello, "+user.getUserLogin();
+                Optional<UserEntity> userEntity = userRepository.findByUserLogin(user.getUserLogin());
+                if (userEntity.isPresent()) {
+                    HttpSession session = request.getSession();
+                    session.setAttribute("isAuthenticated", true);
+                    session.setAttribute("userId", userEntity.get().getUserID());
+                    session.setAttribute("userLogin", userEntity.get().getUserLogin());
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    return "Hello, " + user.getUserLogin();
+                }
             }
             response.setStatus(HttpServletResponse.SC_CONFLICT);
             return "Wrong Password";
         }
-
         response.setStatus(HttpServletResponse.SC_CONFLICT);
-        return "User not exsist";
+        return "User not exist";
     }
 
     @Override
     public String userLogOut(HttpServletRequest request,
                              HttpServletResponse response) throws IOException {
-            request.getSession().setAttribute("isAuthenticated",false);
-            return "You logout succsesfuly";
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.removeAttribute("isAuthenticated");
+            session.removeAttribute("userId");
+            session.removeAttribute("userLogin");
+            session.invalidate();
+        }
+        return "You logout successfully";
     }
 
     @Override

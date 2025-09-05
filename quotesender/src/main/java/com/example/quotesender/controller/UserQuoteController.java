@@ -1,11 +1,9 @@
 package com.example.quotesender.controller;
 
 import com.example.quotesender.model.UserQuote;
-import org.springframework.web.bind.annotation.GetMapping;
 import com.example.quotesender.service.UserQuoteServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -14,10 +12,26 @@ import java.util.List;
 public class UserQuoteController {
 
     @Autowired
-    private UserQuoteServiceImp UserQuoteService;
+    private UserQuoteServiceImp userQuoteService;
 
+    //todo удалить
     @GetMapping("/all")
     public List<UserQuote> getAllQuotes(){
-        return UserQuoteService.showAllQuotes();
+        return userQuoteService.showAllQuotes();
+    }
+
+    @PostMapping("/{quoteId}/like")
+    public String likeQuote(@PathVariable int quoteId) {
+        return userQuoteService.likeQuote(quoteId);
+    }
+
+    @PostMapping("/{quoteId}/dislike")
+    public String dislikeQuote(@PathVariable int quoteId) {
+        return userQuoteService.dislikeQuote(quoteId);
+    }
+
+    @GetMapping("/top")
+    public List<UserQuote> getTopQuotes() {
+        return userQuoteService.getTopRatedQuotes();
     }
 }

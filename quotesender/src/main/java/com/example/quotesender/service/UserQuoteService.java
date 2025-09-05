@@ -5,8 +5,9 @@ import java.util.List;
 
 public interface UserQuoteService {
     public List<UserQuote> showAllQuotes();
-
     public String deleteQuote(int id);
-
-    public String addQuote();
+    public String addQuote(UserQuote quote);
+    public List<UserQuote> getTopRatedQuotes();
+    public String likeQuote(int quoteId);
+    public String dislikeQuote(int quoteId);
 }

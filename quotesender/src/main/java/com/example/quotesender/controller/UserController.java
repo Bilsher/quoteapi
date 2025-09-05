@@ -1,7 +1,7 @@
 package com.example.quotesender.controller;
 
 import com.example.quotesender.model.User;
-import com.example.quotesender.repository.UserEntity;
+import com.example.quotesender.model.UserEntity;
 import com.example.quotesender.service.UserServiceImp;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
