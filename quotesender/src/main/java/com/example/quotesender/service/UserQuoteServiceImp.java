@@ -1,10 +1,11 @@
 package com.example.quotesender.service;
 
-import com.example.quotesender.model.UserQuote;
-import com.example.quotesender.model.UserVote;
+import com.example.quotesender.dto.Quote;
+import com.example.quotesender.model.*;
 import com.example.quotesender.repository.UserQuoteRepository;
 import com.example.quotesender.repository.UserVoteRepository;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,8 +27,6 @@ public class UserQuoteServiceImp implements UserQuoteService {
 
     @Override
     public String likeQuote(int quoteId) {
-        //Получаем ID пользователя из сессии. Если пользователь не авторизован - сразу возвращаем ошибку.
-        //todo удалить
         Integer userId = getAuthenticatedUserId();
         if (userId == null) {
             return "User not authenticated";
@@ -40,17 +39,14 @@ public class UserQuoteServiceImp implements UserQuoteService {
         // Достаем найденную цитату и ищем существующий голос этого пользователя для этой цитаты.
         UserQuote quote = optionalQuote.get();
         Optional<UserVote> existingVote = userVoteRepository.findByUserIdAndQuoteId(userId, quoteId);
-        //Пользователь уже лайкал эту цитату и теперь отменяет свой лайк.
         if (existingVote.isPresent()) {
             UserVote vote = existingVote.get();
             if ("LIKE".equals(vote.getVoteType())) {
-                // Отмена лайка
                 quote.setLikes(quote.getLikes() - 1);
                 userVoteRepository.delete(vote);
                 userQuoteRepository.save(quote);
                 return "Like removed";
             } else {
-                // Смена дизлайка на лайк
                 quote.setDislikes(quote.getDislikes() - 1);
                 quote.setLikes(quote.getLikes() + 1);
                 vote.setVoteType("LIKE");
@@ -59,7 +55,6 @@ public class UserQuoteServiceImp implements UserQuoteService {
                 return "Changed dislike to like";
             }
         } else {
-            // Новый лайк
             quote.setLikes(quote.getLikes() + 1);
             UserVote newVote = new UserVote(userId, quoteId, "LIKE");
             userVoteRepository.save(newVote);
@@ -125,17 +120,40 @@ public class UserQuoteServiceImp implements UserQuoteService {
     }
 
     @Override
-    public String deleteQuote(int id) {
-        if (userQuoteRepository.existsById(id)) {
-            userQuoteRepository.deleteById(id);
-            return "Quote deleted successfully";
+    public String deleteQuote(int quoteId) {
+        Integer userId = getAuthenticatedUserId();
+        if (userId == null) {
+            return "User not authenticated";
+        }
+        if (userQuoteRepository.existsById(quoteId)) {
+            Optional<UserQuote> optionalQuote = userQuoteRepository.findById(quoteId);
+            if (optionalQuote.isEmpty()) {
+                return "Quote not found";
+            }
+            UserQuote quote = optionalQuote.get();
+            if(quote.getUserID()==userId) {
+                userQuoteRepository.deleteById(quoteId);
+                return "Quote deleted successfully";
+            }else
+            {
+                return "You cant delete other users quotes";
+            }
         }
         return "Quote not found";
     }
 
     @Override
-    public String addQuote(UserQuote quote) {
-        userQuoteRepository.save(quote);
+    public String addQuote(Quote quote,
+                           HttpServletRequest request,
+                           HttpServletResponse response) {
+        Integer userId = getAuthenticatedUserId();
+        if (userId == null) {
+            return "User not authenticated";
+        }
+        UserQuote userQuote = new UserQuote();
+        userQuote.setUserID(userId);
+        userQuote.setQuoteText(quote.getQuoteText());
+        userQuoteRepository.save(userQuote);
         return "Quote added successfully";
     }
 
@@ -143,4 +161,5 @@ public class UserQuoteServiceImp implements UserQuoteService {
     public List<UserQuote> getTopRatedQuotes() {
         return userQuoteRepository.findAllByOrderByLikesDesc();
     }
+
 }

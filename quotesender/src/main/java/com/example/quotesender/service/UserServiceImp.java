@@ -1,6 +1,6 @@
 package com.example.quotesender.service;
 
-import com.example.quotesender.model.User;
+import com.example.quotesender.dto.User;
 import com.example.quotesender.model.UserEntity;
 import com.example.quotesender.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
