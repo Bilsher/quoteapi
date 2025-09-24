@@ -37,7 +37,7 @@ cd quotesender
 📚 API Endpoints
 Аутентификация
 ### Метод	Endpoint	Описание
-### POST	/api/v1/quotes/registration	Регистрация пользователя
+## POST	/api/v1/quotes/registration	Регистрация пользователя
 ### POST	/api/v1/quotes/login	Вход в систему
 ### POST	/api/v1/quotes/logOut	Выход из системы
 Цитаты
